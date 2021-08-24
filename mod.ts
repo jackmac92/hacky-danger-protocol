@@ -1,5 +1,6 @@
 import * as path from "https://deno.land/std/path/mod.ts";
 import createLogger from "./logger.ts";
+import { xdotoolOpenActive } from "./xdotool.ts";
 
 const homeDir = Deno.env.get("HOME");
 if (homeDir === undefined) {
@@ -10,7 +11,7 @@ const logger = await createLogger(`${homeDir}/.local/hackydanger.log`);
 
 const decoder = new TextDecoder();
 
-const cmdResponse = async (...cmd: string[]) => {
+export const cmdResponse = async (...cmd: string[]) => {
   const p = Deno.run({ cmd, stdin: "piped", stdout: "piped" });
 
   await p.status();
@@ -89,7 +90,7 @@ switch (action) {
       throw new Error("sscript received non string target cmd");
     }
     await runCmdInPopupShell(
-      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd}`
+      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd}`,
     );
     break;
   }
@@ -117,7 +118,7 @@ switch (action) {
     const repoDir = await cmdResponse(
       "/home/jmccown/.nix-profile/bin/zoxide",
       "query",
-      repoName
+      repoName,
     );
     const filePath = path.join(repoDir, inRepofilePath);
     // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
@@ -134,6 +135,7 @@ switch (action) {
     ];
     const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
     await p.status();
+    await xdotoolOpenActive("emacs");
     break;
   }
   case "namedscript": {
