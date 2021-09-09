@@ -1,0 +1,52 @@
+* launcher script
+#+begin_src shell :tangle ~/.local/bin/hacky-danger.sh :comments no :shebang "#!/usr/bin/env bash"
+DISPLAY=:1 deno run -A /home/jmccown/my/deno/hacky-danger-protocol/mod.ts "$@"
+#+end_src
+
+* application =.desktop= file
+:PROPERTIES:
+:header-args: :comments no
+:header-args:shell: :tangle ./installer.sh :comments no :shebang "#!/usr/bin/env bash"
+:END:
+[[https://askubuntu.com/a/1164388/407982][Guide]]
+
+Make sure it is not already registered
+#+begin_src shell
+gio mime x-scheme-handler/hackydanger
+#+end_src
+
+Create the desktop file
+#+begin_src fundamental :tangle ./hackydanger-handler.desktop
+[Desktop Entry]
+Version=1.0
+Type=Application
+StartupNotify=true
+Exec=/home/jmccown/.local/bin/hacky-danger.sh %u
+Terminal=false
+Categories=Utility;X-XFCE;X-Xfce-Toplevel;
+MimeType=x-scheme-handler/hackydanger
+Name=Hacky extra protocol
+#+end_src
+
+Install desktop file
+#+begin_src shell
+desktop-file-install --dir=$HOME/.local/share/applications/ hackydanger-handler.desktop
+#+end_src
+
+Register the desktop file (to the main and legacy locations)
+main location
+#+begin_src shell
+gio mime x-scheme-handler/hackydanger hackydanger-handler.desktop
+#+end_src
+legacy location
+#+begin_src shell
+xdg-mime default hackydanger-handler.desktop x-scheme-handler/hackydanger
+#+end_src
+double legacy location
+#+begin_src shell
+echo 'x-scheme-handler/hackydanger=hackydanger-handler.desktop' | tee -a ~/.local/share/applications/defaults.list
+#+end_src
+Update mimeinfo cache
+#+begin_src shell
+update-desktop-database ~/.local/share/applications/
+#+end_src
