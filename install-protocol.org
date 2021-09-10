@@ -1,6 +1,6 @@
 * launcher script
 #+begin_src shell :tangle ~/.local/bin/hacky-danger.sh :comments no :shebang "#!/usr/bin/env bash"
-DISPLAY=:1 deno run -A /home/jmccown/my/deno/hacky-danger-protocol/mod.ts "$@"
+DISPLAY=:1 deno run -A /home/jmccown/Projects/deno/hacky-danger-protocol/mod.ts "$@"
 #+end_src
 
 * application =.desktop= file
