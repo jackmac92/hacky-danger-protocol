@@ -1,4 +1,5 @@
 import * as path from "https://deno.land/std/path/mod.ts";
+import { cmdResponse } from "./cmdResponse.ts";
 import createLogger from "./logger.ts";
 import { xdotoolOpenActive } from "./xdotool.ts";
 
@@ -8,18 +9,6 @@ if (homeDir === undefined) {
 }
 
 const logger = await createLogger(`${homeDir}/.local/hackydanger.log`);
-
-const decoder = new TextDecoder();
-
-export const cmdResponse = async (...cmd: string[]) => {
-  const p = Deno.run({ cmd, stdin: "piped", stdout: "piped" });
-
-  await p.status();
-
-  const o = await p.output();
-  const out = decoder.decode(o);
-  return out;
-};
 
 logger.info("Incoming");
 
@@ -90,7 +79,7 @@ switch (action) {
       throw new Error("sscript received non string target cmd");
     }
     await runCmdInPopupShell(
-      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd}`,
+      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd}`
     );
     break;
   }
@@ -107,32 +96,31 @@ switch (action) {
   case "cbissh":
     throw new Error(`unimplemented!`);
   case "localDev": {
-    const { fileUrl } = params;
-    if (typeof fileUrl !== "string") {
-      throw new Error("Invalid file url");
-    }
-    const url = new URL(fileUrl);
-    const lineNo = "0";
-    const repoName = url.pathname.split("/")[2];
-    const inRepofilePath = url.pathname.slice(3);
+    const { fileInfo } = params as { fileInfo: ParsedGitUrl };
+
+    const lineNo = fileInfo.hash.slice(1);
+    const gitRef = fileInfo.ref;
+    const repoName = fileInfo.name;
+    const inRepofilePath = fileInfo.filepath;
     const repoDir = await cmdResponse(
       "/home/jmccown/.nix-profile/bin/zoxide",
       "query",
-      repoName,
+      repoName
     );
+    logger.debug(inRepofilePath);
     const filePath = path.join(repoDir, inRepofilePath);
     // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
-    logger.debug(`opening ${repoName} at ${repoDir}`);
-    // const cmd = [
-    //   "/home/jmccown/.nix-profile/bin/emacsclient",
-    //   `+${lineNo} `,
-    //   filePath,
-    // ];
+    logger.debug(`opening ${repoName} at ref ${gitRef} for ${inRepofilePath}`);
     const cmd = [
       "/home/jmccown/.nix-profile/bin/emacsclient",
-      "-e",
-      `(counsel-projectile-switch-project-by-name ${repoDir})`,
+      `+${lineNo} `,
+      filePath,
     ];
+    // const cmd = [
+    //   "/home/jmccown/.nix-profile/bin/emacsclient",
+    //   "-e",
+    //   `(counsel-projectile-switch-project-by-name ${repoDir})`,
+    // ];
     const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
     await p.status();
     await xdotoolOpenActive("emacs");
@@ -150,3 +138,18 @@ switch (action) {
 addEventListener("unhandledrejection", (err) => {
   logger.error(err);
 });
+
+interface ParsedGitUrl {
+  search: string;
+  hash: string;
+  href: string;
+  source: string;
+  name: string;
+  owner: string;
+  commit: string;
+  ref: string;
+  filepathtype: string;
+  filepath: string;
+  organization: string;
+  full_name: string;
+}
