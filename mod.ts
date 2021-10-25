@@ -95,6 +95,38 @@ switch (action) {
   }
   case "cbissh":
     throw new Error(`unimplemented!`);
+  case "mpvplay": {
+    const { videoUrl } = params as {
+      videoUrl: string;
+    };
+    await Deno.run({
+      cmd: [
+        "mpv",
+        "--ytdl-format=bestvideo+bestaudio/best",
+        // "--fs",
+        // "--speed=2.5",
+        // "--af=rubberband=pitch-scale=0.981818181818181",
+        videoUrl,
+      ],
+      env: { DISPLAY: ":1" },
+    }).status();
+    break;
+  }
+  case "gitlabArtifacts": {
+    const { jobId, projectId, gitlabHost } = params as {
+      gitlabHost: string;
+      projectId: string;
+      jobId: string;
+    };
+    let cmd = "";
+    if (gitlabHost.includes("cbinsights")) {
+      cmd += "cd ~/cbinsights; ";
+    }
+    cmd += `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
+    logger.info(cmd);
+    await runCmdInPopupShell(cmd);
+    break;
+  }
   case "localDev": {
     const { fileInfo } = params as { fileInfo: ParsedGitUrl };
 
