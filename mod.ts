@@ -128,7 +128,11 @@ switch (action) {
     break;
   }
   case "localDev": {
-    const { fileInfo } = params as { fileInfo: ParsedGitUrl };
+    const { fileInfoJson } = params;
+    if (typeof fileInfoJson !== "string") {
+      throw new Error("Unexpected json type, not string");
+    }
+    const fileInfo: ParsedGitUrl = JSON.parse(fileInfoJson);
 
     const lineNo = fileInfo.hash.slice(1);
     const gitRef = fileInfo.ref;
@@ -139,13 +143,14 @@ switch (action) {
       "query",
       repoName
     );
-    logger.debug(inRepofilePath);
     const filePath = path.join(repoDir, inRepofilePath);
     // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
-    logger.debug(`opening ${repoName} at ref ${gitRef} for ${inRepofilePath}`);
+    logger.debug(
+      `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
+    );
     const cmd = [
       "/home/jmccown/.nix-profile/bin/emacsclient",
-      `+${lineNo} `,
+      `+${lineNo}`,
       filePath,
     ];
     // const cmd = [
@@ -158,6 +163,7 @@ switch (action) {
     await xdotoolOpenActive("emacs");
     break;
   }
+
   case "namedscript": {
     const p = Deno.run({ cmd: [subAction], stdout: "piped", stderr: "piped" });
     await p.status();
