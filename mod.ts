@@ -168,6 +168,15 @@ switch (action) {
 }
 
 addEventListener("unhandledrejection", (err) => {
+  const x = Deno.run({
+    cmd: [
+      "/home/jmccown/.nix-profile/bin/dunstify",
+      "--urgency=critical",
+      "hacky danger protocol errror",
+      err.toString(),
+    ],
+    env: { DISPLAY: ":1" },
+  });
   logger.error(err);
 });
 
