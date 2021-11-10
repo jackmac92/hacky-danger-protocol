@@ -82,7 +82,7 @@ switch (action) {
       throw new Error("sscript received non string target cmd");
     }
     await runCmdInPopupShell(
-      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd} ${targetCmdArgs}`
+      `/home/jmccown/.local/scripts/core/bin/s ${targetCmd} ${targetCmdArgs}`
     );
     break;
   }
