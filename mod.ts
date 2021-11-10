@@ -75,11 +75,14 @@ switch (action) {
   }
   case "sscript": {
     const targetCmd = params.script;
+    const targetCmdArgs = (params.scriptArgs ?? [])
+      .map((el) => `'${el}'`)
+      .join(" ");
     if (typeof targetCmd !== "string") {
       throw new Error("sscript received non string target cmd");
     }
     await runCmdInPopupShell(
-      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd}`
+      `/home/jmccown/.config/custom/path_scripts/s ${targetCmd} ${targetCmdArgs}`
     );
     break;
   }
