@@ -1,9 +1,24 @@
 const decoder = new TextDecoder();
 
-export const cmdResponse = async (...cmd: string[]) => {
-  const p = Deno.run({ cmd, stdin: "piped", stdout: "piped" });
+export const cmdResponse = async (...cmd: string[]): Promise<string> => {
+  const p = Deno.run({
+    cmd,
+    stdin: "piped",
+    stdout: "piped",
+    stderr: "piped",
+    env: { S_DEBUGGER: "1", DISPLAY: ":1" },
+  });
 
-  await p.status();
+  const status = await p.status();
+
+  const stderrBuf = await p.stderrOutput();
+  const stderr = decoder.decode(stderrBuf);
+  if (stderr.length > 0) {
+    console.log(`Command stderr: ${stderr}`);
+  }
+  if (!status.success) {
+    throw new Error(stderr);
+  }
 
   const o = await p.output();
   const out = decoder.decode(o);

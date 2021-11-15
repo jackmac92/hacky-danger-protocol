@@ -15,8 +15,9 @@ logger.info("Incoming");
 let req;
 try {
   req = new URL(Deno.args[0]);
-} catch {
+} catch (e) {
   logger.error("Failed to parse input!");
+  logger.error(e);
   Deno.exit(1);
 }
 
@@ -75,17 +76,26 @@ switch (action) {
   }
   case "sscript": {
     const targetCmd = params.script;
-    const targetCmdArgs = (params.scriptArgs ?? [])
-      .map((el) => `'${el}'`)
-      .join(" ");
     if (typeof targetCmd !== "string") {
       throw new Error("sscript received non string target cmd");
     }
-    await runCmdInPopupShell(
-      `/home/jmccown/.local/scripts/core/bin/s ${targetCmd} ${targetCmdArgs}`
+    const targetCmdArgs = JSON.parse(
+      typeof params.scriptArgs === "string" ? params.scriptArgs : "[]"
     );
+    if (!Array.isArray(targetCmdArgs)) {
+      throw new Error("sscript received non array args");
+    }
+    logger.info("starting command");
+
+    const output = await cmdResponse(
+      "/home/jmccown/.local/scripts/core/bin/s",
+      ...targetCmd.split(" "),
+      ...targetCmdArgs
+    );
+    logger.info(`Response received: ${output}`);
     break;
   }
+
   case "youtubedl": {
     const targetUrl = params.url;
     if (typeof targetUrl !== "string") {
