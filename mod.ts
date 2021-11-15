@@ -98,21 +98,16 @@ switch (action) {
   }
   case "cbissh":
     throw new Error(`unimplemented!`);
-  case "mpvplay": {
-    const { videoUrl } = params as {
-      videoUrl: string;
+  case "mpv": {
+    const { url } = params as {
+      url: string;
     };
-    await Deno.run({
-      cmd: [
-        "mpv",
-        "--ytdl-format=bestvideo+bestaudio/best",
-        // "--fs",
-        // "--speed=2.5",
-        // "--af=rubberband=pitch-scale=0.981818181818181",
-        videoUrl,
-      ],
-      env: { DISPLAY: ":1" },
-    }).status();
+    await cmdResponse(
+      "mpv",
+      "--ytdl-format=bestvideo+bestaudio/best",
+      "--af=rubberband=pitch-scale=0.981818181818181",
+      url
+    );
     break;
   }
   case "gitlabArtifacts": {
