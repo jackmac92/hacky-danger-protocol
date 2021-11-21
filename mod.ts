@@ -86,13 +86,18 @@ switch (action) {
       throw new Error("sscript received non array args");
     }
     logger.info("starting command");
-
-    const output = await cmdResponse(
+    const fullCmd = [
       "/home/jmccown/.local/scripts/core/bin/s",
       ...targetCmd.split(" "),
-      ...targetCmdArgs
-    );
-    logger.info(`Response received: ${output}`);
+      ...targetCmdArgs,
+    ];
+    logger.debug(targetCmdArgs);
+    logger.debug("\n\n\n");
+    logger.debug(fullCmd);
+    // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
+    await runCmdInPopupShell(fullCmd.join(" "));
+    // const output = await cmdResponse(...fullCmd);
+    // logger.info(`Response received: ${output}`);
     break;
   }
 
