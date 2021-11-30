@@ -1,6 +1,7 @@
 import { cmdResponse } from "./cmdResponse.ts";
 
-export const xdotool = (...cmd: string[]) => cmdResponse("xdotool", ...cmd);
+export const xdotool = (...cmd: string[]) =>
+  cmdResponse(`xdotool ${cmd.join(" ")}`);
 
 export const xdotoolCurrentWindow = () => xdotool("getactivewindow");
 
