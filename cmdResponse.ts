@@ -2,16 +2,15 @@ const decoder = new TextDecoder();
 
 export const cmdResponse = async (...cmd: string[]): Promise<string> => {
   const p = Deno.run({
-    cmd,
-    stdin: "piped",
+    cmd: ["bash", "-c", cmd.join(" ")],
     stdout: "piped",
     stderr: "piped",
-    env: { S_DEBUGGER: "1", DISPLAY: ":1" },
   });
 
   const status = await p.status();
 
   const stderrBuf = await p.stderrOutput();
+  await Deno.stdout.write(stderrBuf);
   const stderr = decoder.decode(stderrBuf);
   if (stderr.length > 0) {
     console.log(`Command stderr: ${stderr}`);
@@ -21,9 +20,9 @@ export const cmdResponse = async (...cmd: string[]): Promise<string> => {
   }
 
   const o = await p.output();
+  await Deno.stdout.write(o);
   const out = decoder.decode(o);
-
-  // return out;
+  p.close();
 
   // strip trailing newline from response
   return out.split("\n").reverse().slice(1).reverse().join("\n");
