@@ -1,5 +1,5 @@
 import * as path from "https://deno.land/std/path/mod.ts";
-import { cmdResponse } from "./cmdResponse.ts";
+import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 import createLogger from "./logger.ts";
 import { xdotoolOpenActive } from "./xdotool.ts";
 
