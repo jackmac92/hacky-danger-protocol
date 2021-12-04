@@ -45,7 +45,7 @@ const runCmdInPopupShell = (cmd: string, options = defaultCmdOpts) => {
   }
   const x = Deno.run({
     ...options,
-    cmd: ["st", "zsh", "-c", cmd],
+    cmd: ["st", "-e", "zsh", "-c", `${cmd} || zsh`],
     env,
   });
   return x.status();
