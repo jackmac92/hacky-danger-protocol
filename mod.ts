@@ -132,8 +132,6 @@ if (import.meta.main) {
       });
       break;
     }
-    case "cbissh":
-      throw new Error(`unimplemented!`);
     case "mpv": {
       const { url } = params as {
         url: string;
@@ -182,11 +180,7 @@ if (import.meta.main) {
       logger.debug(
         `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
       );
-      const cmd = [
-        "/home/jmccown/.nix-profile/bin/emacsclient",
-        `+${lineNo}`,
-        filePath,
-      ];
+      const cmd = [Deno.env.get("VISUAL") ?? "e", `+${lineNo}`, filePath];
       // const cmd = [
       //   "/home/jmccown/.nix-profile/bin/emacsclient",
       //   "-e",
@@ -198,15 +192,6 @@ if (import.meta.main) {
       break;
     }
 
-    case "namedscript": {
-      const p = Deno.run({
-        cmd: [subAction],
-        stdout: "piped",
-        stderr: "piped",
-      });
-      await p.status();
-      break;
-    }
     default:
       throw new Error(`Unhandled action ${action}`);
   }
