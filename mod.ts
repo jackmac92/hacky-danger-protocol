@@ -180,15 +180,15 @@ if (import.meta.main) {
       logger.debug(
         `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
       );
-      const cmd = [Deno.env.get("VISUAL") ?? "e", `+${lineNo}`, filePath];
-      // const cmd = [
-      //   "/home/jmccown/.nix-profile/bin/emacsclient",
-      //   "-e",
-      //   `(counsel-projectile-switch-project-by-name ${repoDir})`,
-      // ];
+
+      const cmd = Deno.env.get("VISUAL")?.split(" ") ?? ["e"];
+      if (parseInt(lineNo, 10)) {
+        cmd.push(`+${lineNo}`);
+      }
+      cmd.push(filePath);
+      logger.debug(`running: ${cmd}`);
       const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
       await p.status();
-      await xdotoolOpenActive("emacs");
       break;
     }
 
