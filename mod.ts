@@ -12,6 +12,34 @@ const logger = await createLogger(`${homeDir}/.local/hackydanger.log`);
 
 logger.info("starting");
 
+interface captureInfo {
+  title: string;
+  template: string;
+  tags?: string[];
+  body?: string;
+  scheduled?: string;
+  deadline?: string;
+}
+
+export const captureViaGitlabApi = (captureInfo: captureInfo) =>
+  fetch("https://gitlab.com/api/v4/projects/34035963/repository/commits", {
+    data: JSON.stringify({
+      branch: "master",
+      commit_message: "hackydanger protocol incoming",
+      actions: [
+        {
+          action: "create",
+          file_path: `${new Date()}/Dictionary.json`,
+          content: JSON.stringify(captureInfo),
+        },
+      ],
+    }),
+    headers: {
+      "Private-Token": Deno.env.get("GITLAB_ORG_CAPTURE_INBOX_TOKEN"),
+    },
+    method: "POST",
+  });
+
 export const handleSScript = async (sscript: string, ...args: string[]) => {
   const fullCmd = [
     "/home/jmccown/.local/scripts/core/bin/s",
@@ -191,7 +219,9 @@ if (import.meta.main) {
       await p.status();
       break;
     }
-
+    captureViaGitlabApi: {
+      await captureViaGitlabApi(params as captureInfo);
+    }
     default:
       throw new Error(`Unhandled action ${action}`);
   }
