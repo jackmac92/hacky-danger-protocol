@@ -40,12 +40,15 @@ export const captureViaGitlabApi = (captureInfo: captureInfo) =>
     method: "POST",
   });
 
-export const handleSScript = async (sscript: string, ...args: string[]) => {
-  const fullCmd = [
+const sScriptMakeCmd = (sscript: string, ...args: string[]) =>
+  [
     "/home/jmccown/.local/scripts/core/bin/s",
     ...sscript.split(" "),
     ...args.map((y) => `'${y}'`),
   ].join(" ");
+
+export const handleSScript = async (sscript: string, ...args: string[]) => {
+  const fullCmd = sScriptMakeCmd(sscript, ...args);
   logger.debug(fullCmd);
   // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
   // await runCmdInPopupShell(fullCmd.join(" "));
@@ -144,9 +147,26 @@ if (import.meta.main) {
       logger.info("starting s command");
       // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
       // await runCmdInPopupShell(fullCmd.join(" "));
-      const decoder = new TextDecoder();
       const output = await handleSScript(targetCmd, ...targetCmdArgs);
       logger.info(`Response received: ${output}`);
+      break;
+    }
+    case "popupsscript": {
+      const targetCmd = params.script;
+      if (typeof targetCmd !== "string") {
+        throw new Error("sscript received non string target cmd");
+      }
+      const targetCmdArgs = JSON.parse(
+        typeof params.scriptArgs === "string" ? params.scriptArgs : "[]"
+      );
+      if (!Array.isArray(targetCmdArgs)) {
+        throw new Error("sscript received non array args");
+      }
+      logger.info("starting s command popup");
+      // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
+      // await runCmdInPopupShell(fullCmd.join(" "));
+
+      await runCmdInPopupShell(sScriptMakeCmd(sscript, ...args));
       break;
     }
 
