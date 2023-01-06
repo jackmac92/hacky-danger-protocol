@@ -207,41 +207,42 @@ if (import.meta.main) {
       await runCmdInPopupShell(cmd);
       break;
     }
-    case "localDev": {
-      const { fileInfoJson } = params;
-      if (typeof fileInfoJson !== "string") {
-        throw new Error("Unexpected json type, not string");
-      }
-      const fileInfo: ParsedGitUrl = JSON.parse(fileInfoJson);
+    case "localDev":
+      {
+        const { fileInfoJson } = params;
+        if (typeof fileInfoJson !== "string") {
+          throw new Error("Unexpected json type, not string");
+        }
+        const fileInfo: ParsedGitUrl = JSON.parse(fileInfoJson);
 
-      const lineNo = fileInfo.hash.slice(1);
-      const gitRef = fileInfo.ref;
-      const repoName = fileInfo.name;
-      const inRepofilePath = fileInfo.filepath;
-      const repoDir = await cmdResponse(
-        "/home/jmccown/.nix-profile/bin/zoxide",
-        "query",
-        repoName
-      );
-      const filePath = path.join(repoDir, inRepofilePath);
-      // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
-      logger.debug(
-        `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
-      );
+        const lineNo = fileInfo.hash.slice(1);
+        const gitRef = fileInfo.ref;
+        const repoName = fileInfo.name;
+        const inRepofilePath = fileInfo.filepath;
+        const repoDir = await cmdResponse(
+          "/home/jmccown/.nix-profile/bin/zoxide",
+          "query",
+          repoName
+        );
+        const filePath = path.join(repoDir, inRepofilePath);
+        // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
+        logger.debug(
+          `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
+        );
 
-      const cmd = Deno.env.get("VISUAL")?.split(" ") ?? ["e"];
-      if (parseInt(lineNo, 10)) {
-        cmd.push(`+${lineNo}`);
+        const cmd = Deno.env.get("VISUAL")?.split(" ") ?? ["e"];
+        if (parseInt(lineNo, 10)) {
+          cmd.push(`+${lineNo}`);
+        }
+        cmd.push(filePath);
+        logger.debug(`running: ${cmd}`);
+        const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
+        await p.status();
+        break;
       }
-      cmd.push(filePath);
-      logger.debug(`running: ${cmd}`);
-      const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
-      await p.status();
-      break;
-    }
-    captureViaGitlabApi: {
-      await captureViaGitlabApi(params as captureInfo);
-    }
+      captureViaGitlabApi: {
+        await captureViaGitlabApi(params as captureInfo);
+      }
     default:
       throw new Error(`Unhandled action ${action}`);
   }
