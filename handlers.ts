@@ -1,4 +1,4 @@
-export default {
+export default (logger) => ({
   repoactivate: (params) => {
     throw new Error(`unimplemented!`);
   },
@@ -111,4 +111,4 @@ export default {
     await p.status();
   },
   captureViaGitlabApi: (params) => captureViaGitlabApi(params as captureInfo),
-};
+});

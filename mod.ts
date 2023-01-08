@@ -123,7 +123,7 @@ if (import.meta.main) {
   logger.info(`Handling ${action}`);
 
   try {
-    handlers[action](params);
+    handlers(logger)[action](params);
   } catch {
     throw new Error(
       `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`
