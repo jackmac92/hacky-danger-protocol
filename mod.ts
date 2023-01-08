@@ -125,7 +125,9 @@ if (import.meta.main) {
   try {
     handlers[action](params);
   } catch {
-    throw new Error(`Unhandled action ${action}`);
+    throw new Error(
+      `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`
+    );
   }
 
   addEventListener("unhandledrejection", (err) => {
