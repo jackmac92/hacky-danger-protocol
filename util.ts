@@ -19,7 +19,13 @@ export const runCmdInPopupShell = (cmd: string, options = defaultCmdOpts) => {
   }
   const x = Deno.run({
     ...options,
-    cmd: ["st", "-e", "zsh", "-c", `${cmd} || zsh`],
+    cmd: [
+      "st",
+      "-e",
+      "zsh",
+      "-lc",
+      `${cmd} || { echo "Whoops fucked up..."; zsh }`,
+    ],
     env,
   });
   return x.status();
@@ -62,9 +68,9 @@ export const captureViaGitlabApi = (captureInfo: captureInfo) =>
 
 export const sScriptMakeCmd = (sscript: string, ...args: string[]) =>
   [
-    "direnv",
-    "exec",
-    "/home/jmccown/.local/fullenv",
+    // "direnv",
+    // "exec",
+    // "/home/jmccown/.local/fullenv",
     "/home/jmccown/.local/scripts/core/bin/s",
     ...sscript.split(" "),
     ...args.map((y) => `'${y}'`),
