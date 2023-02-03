@@ -62,6 +62,9 @@ export const captureViaGitlabApi = (captureInfo: captureInfo) =>
 
 export const sScriptMakeCmd = (sscript: string, ...args: string[]) =>
   [
+    "direnv",
+    "exec",
+    "/home/jmccown/.local/fullenv",
     "/home/jmccown/.local/scripts/core/bin/s",
     ...sscript.split(" "),
     ...args.map((y) => `'${y}'`),
