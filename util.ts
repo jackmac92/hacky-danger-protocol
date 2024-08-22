@@ -1,39 +1,39 @@
+import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+
 const defaultCmdOpts: { env?: { [key: string]: string }; cwd: string } = {
-  cwd: Deno.env.get("HOME"),
+  cwd: Deno.env.get("HOME") || "",
   env: {},
 };
 
-export const _runCmdInTmux = (cmd: string, options = defaultCmdOpts) => {
+export const _runCmdInTmux = async (cmd: string, options = defaultCmdOpts) => {
   // accept params
-  const x = Deno.run({
+  const x = new Deno.Command("tmux", {
     ...options,
-    cmd: ["tmux", "zsh", "-c", cmd],
+    args: ["zsh", "-c", cmd],
   });
-  return x.status();
+  const { code } = await x.output();
+  return code;
 };
 
-export const runCmdInPopupShell = (cmd: string, options = defaultCmdOpts) => {
+export const runCmdInPopupShell = async (
+  cmd: string,
+  options = defaultCmdOpts,
+) => {
   const { env = {} } = options;
   if (!env.DISPLAY) {
     env.DISPLAY = ":1";
   }
-  const x = Deno.run({
+  const x = new Deno.Command("st", {
     ...options,
-    cmd: [
-      "st",
-      "-e",
-      "zsh",
-      "-lc",
-      `${cmd} || { echo "Whoops fucked up..."; zsh }`,
-    ],
+    args: ["-e", "zsh", "-lc", `${cmd} || { echo "Whoops fucked up..."; zsh }`],
     env,
   });
-  return x.status();
+  const { code } = await x.output();
+  return code;
 };
 
-export const handleSScript = async (sscript: string, ...args: string[]) => {
+export const handleSScript = (sscript: string, ...args: string[]) => {
   const fullCmd = sScriptMakeCmd(sscript, ...args);
-  logger.debug(fullCmd);
   // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
   // await runCmdInPopupShell(fullCmd.join(" "));
   return cmdResponse(fullCmd);
@@ -49,7 +49,7 @@ export interface captureInfo {
 }
 export const captureViaGitlabApi = (captureInfo: captureInfo) =>
   fetch("https://gitlab.com/api/v4/projects/34035963/repository/commits", {
-    data: JSON.stringify({
+    body: JSON.stringify({
       branch: "master",
       commit_message: "hackydanger protocol incoming",
       actions: [
@@ -61,7 +61,13 @@ export const captureViaGitlabApi = (captureInfo: captureInfo) =>
       ],
     }),
     headers: {
-      "Private-Token": Deno.env.get("GITLAB_ORG_CAPTURE_INBOX_TOKEN"),
+      "Private-Token": (() => {
+        const glToken = Deno.env.get("GITLAB_ORG_CAPTURE_INBOX_TOKEN");
+        if (!glToken) {
+          throw new Error("Missing env var: GITLAB_ORG_CAPTURE_INBOX_TOKEN");
+        }
+        return glToken;
+      })(),
     },
     method: "POST",
   });
@@ -71,7 +77,7 @@ export const sScriptMakeCmd = (sscript: string, ...args: string[]) =>
     // "direnv",
     // "exec",
     // "/home/jmccown/.local/fullenv",
-    "/home/jmccown/.local/scripts/core/bin/s",
+    "/home/jmccown/.local/chez-bin/s",
     ...sscript.split(" "),
     ...args.map((y) => `'${y}'`),
   ].join(" ");

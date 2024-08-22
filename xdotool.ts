@@ -10,7 +10,7 @@ export const xdotoolOpenActive = async (appName: string) => {
     "search",
     "--onlyvisible",
     "--name",
-    appName
+    appName,
   );
   if (!existingWinId) {
     throw new Error("No such window found");

@@ -4,15 +4,15 @@ import { Logger } from "https://deno.land/std@0.93.0/log/mod.ts";
 import type { captureInfo } from "./util.ts";
 // import { xdotoolOpenActive } from "./xdotool.ts";
 import {
-  runCmdInPopupShell,
-  handleSScript,
-  sScriptMakeCmd,
   captureViaGitlabApi,
+  handleSScript,
   ParsedGitUrl,
+  runCmdInPopupShell,
+  sScriptMakeCmd,
 } from "./util.ts";
 
 export default (logger: Logger) => ({
-  repoactivate: (params: any) => {
+  repoactivate: (_: any) => {
     throw new Error(`unimplemented!`);
   },
   popupexec: (params: any) => {
@@ -29,7 +29,7 @@ export default (logger: Logger) => ({
       throw new Error("sscript received non string target cmd");
     }
     const targetCmdArgs = JSON.parse(
-      typeof params.scriptArgs === "string" ? params.scriptArgs : "[]"
+      typeof params.scriptArgs === "string" ? params.scriptArgs : "[]",
     );
     if (!Array.isArray(targetCmdArgs)) {
       throw new Error("sscript received non array args");
@@ -46,7 +46,7 @@ export default (logger: Logger) => ({
       throw new Error("sscript received non string target cmd");
     }
     const targetCmdArgs = JSON.parse(
-      typeof params.scriptArgs === "string" ? params.scriptArgs : "[]"
+      typeof params.scriptArgs === "string" ? params.scriptArgs : "[]",
     );
     if (!Array.isArray(targetCmdArgs)) {
       throw new Error("sscript received non array args");
@@ -72,22 +72,23 @@ export default (logger: Logger) => ({
       "mpv",
       "--ytdl-format=bestvideo+bestaudio/best",
       "--af=rubberband=pitch-scale=0.981818181818181",
-      url
+      url,
     );
   },
-  gitlabArtifacts: async (params: any) => {
+  gitlabArtifacts: (params: any) => {
     const { jobId, projectId, gitlabHost } = params as {
       gitlabHost: string;
       projectId: string;
       jobId: string;
     };
     let cmd = "";
+    let cwd = null;
     if (gitlabHost.includes("cbinsights")) {
-      cmd += "cd ~/cbinsights; ";
+      cwd += "~/cbinsights; ";
     }
     cmd += `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
     logger.info(cmd);
-    return runCmdInPopupShell(cmd);
+    return runCmdInPopupShell(cmd, { cwd });
   },
   localDev: async (params: any) => {
     const { fileInfoJson } = params;
@@ -103,12 +104,12 @@ export default (logger: Logger) => ({
     const repoDir = await cmdResponse(
       "~/.nix-profile/bin/zoxide",
       "query",
-      repoName
+      repoName,
     );
     const filePath = path.join(repoDir, inRepofilePath);
     // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
     logger.debug(
-      `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`
+      `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`,
     );
 
     const cmd = Deno.env.get("VISUAL")?.split(" ") ?? ["e"];
@@ -117,8 +118,9 @@ export default (logger: Logger) => ({
     }
     cmd.push(filePath);
     logger.debug(`running: ${cmd}`);
-    const p = Deno.run({ cmd, stdout: "piped", stderr: "piped" });
-    await p.status();
+    const p = new Deno.Command({ cmd, stdout: "piped", stderr: "piped" });
+    const { code } = p.output();
+    return code;
   },
   captureViaGitlabApi: (params: any) =>
     captureViaGitlabApi(params as captureInfo),

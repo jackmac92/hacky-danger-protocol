@@ -25,7 +25,7 @@ if (import.meta.main) {
 
   const action = req.host;
 
-  const subAction = req.pathname;
+  // const subAction = req.pathname;
   const paramsAnnoyingFormat = new URLSearchParams(req.search);
 
   const params: { [k: string]: unknown } = {};
@@ -40,14 +40,13 @@ if (import.meta.main) {
     handlers(logger)[action](params);
   } catch {
     throw new Error(
-      `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`
+      `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`,
     );
   }
 
   addEventListener("unhandledrejection", (err) => {
-    const x = Deno.run({
-      cmd: [
-        "/home/jmccown/.nix-profile/bin/dunstify",
+    new Deno.Command("/home/jmccown/.nix-profile/bin/dunstify", {
+      args: [
         "--urgency=critical",
         "hacky danger protocol errror",
         err.toString(),

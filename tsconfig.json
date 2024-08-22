@@ -3,7 +3,7 @@
     "plugins": [
       {
         "name": "typescript-deno-plugin",
-        "enable": true, 
+        "enable": true,
         "importmap": "import_map.json"
       }
     ],
