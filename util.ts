@@ -47,6 +47,7 @@ export interface captureInfo {
   scheduled?: string;
   deadline?: string;
 }
+
 export const captureViaGitlabApi = (captureInfo: captureInfo) =>
   fetch("https://gitlab.com/api/v4/projects/34035963/repository/commits", {
     body: JSON.stringify({

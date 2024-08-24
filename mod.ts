@@ -26,13 +26,9 @@ if (import.meta.main) {
   const action = req.host;
 
   // const subAction = req.pathname;
-  const paramsAnnoyingFormat = new URLSearchParams(req.search);
 
-  const params: { [k: string]: unknown } = {};
+  const params: { [k: string]: unknown } = Object.fromEntries(req.search);
 
-  for (const p of paramsAnnoyingFormat.keys()) {
-    params[p] = paramsAnnoyingFormat.get(p);
-  }
   logger.info(`Handling ${action}`);
 
   try {

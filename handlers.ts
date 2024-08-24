@@ -11,6 +11,11 @@ import {
   sScriptMakeCmd,
 } from "./util.ts";
 
+interface PopupSScript {
+  script: string;
+  scriptArgs: string | string[];
+}
+
 export default (logger: Logger) => ({
   repoactivate: (_: any) => {
     throw new Error(`unimplemented!`);
@@ -40,7 +45,7 @@ export default (logger: Logger) => ({
     const output = await handleSScript(targetCmd, ...targetCmdArgs);
     logger.info(`Response received: ${output}`);
   },
-  popupsscript: (params: any) => {
+  popupsscript: (params: PopupSScript) => {
     const targetCmd = params.script;
     if (typeof targetCmd !== "string") {
       throw new Error("sscript received non string target cmd");

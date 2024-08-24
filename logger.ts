@@ -1,6 +1,11 @@
 import * as log from "https://deno.land/std@0.93.0/log/mod.ts";
 
-export default async function (logFile: string) {
+let logger: log.Logger | null = null;
+
+export async function initLogger(logFile: string) {
+  if (logger) {
+    return logger;
+  }
   await log.setup({
     // seems to use the maximum provided level (e.g. no debug messages unless both are set to debug)
     handlers: {
@@ -19,6 +24,13 @@ export default async function (logFile: string) {
       },
     },
   });
+  logger = log.getLogger();
+  return logger;
+}
 
-  return log;
+export function getLogger(): log.Logger {
+  if (!logger) {
+    throw new Error("Logger not initialized. Call initLogger() first.");
+  }
+  return logger;
 }
