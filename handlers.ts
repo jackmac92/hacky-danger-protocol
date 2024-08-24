@@ -11,16 +11,42 @@ import {
   sScriptMakeCmd,
 } from "./util.ts";
 
-interface PopupSScript {
+interface RunSScript {
   script: string;
   scriptArgs: string | string[];
 }
+interface LocalDevArgs {
+  fileInfoJson: string;
+}
+interface GitlabArtifactsParams {
+  gitlabHost: string;
+  projectId: string;
+  jobId: string;
+}
+interface MpvParams {
+  url: string;
+}
+interface YoutubedlParams {
+  url: string;
+}
+interface PopupExec {
+  targetExecStr: string;
+}
+
+export type HandlerArgs =
+  | RunSScript
+  | captureInfo
+  | LocalDevArgs
+  | MpvParams
+  | YoutubedlParams
+  | PopupExec
+  | GitlabArtifactsParams;
 
 export default (logger: Logger) => ({
-  repoactivate: (_: any) => {
+  repoactivate: (_: unknown) => {
     throw new Error(`unimplemented!`);
   },
-  popupexec: (params: any) => {
+  popupexec: (params: PopupExec) => {
     const { targetExecStr } = params;
     logger.debug(targetExecStr);
     if (typeof targetExecStr !== "string") {
@@ -28,7 +54,7 @@ export default (logger: Logger) => ({
     }
     return runCmdInPopupShell(`${targetExecStr}`);
   },
-  sscript: async (params: any) => {
+  sscript: async (params: RunSScript) => {
     const targetCmd = params.script;
     if (typeof targetCmd !== "string") {
       throw new Error("sscript received non string target cmd");
@@ -45,7 +71,7 @@ export default (logger: Logger) => ({
     const output = await handleSScript(targetCmd, ...targetCmdArgs);
     logger.info(`Response received: ${output}`);
   },
-  popupsscript: (params: PopupSScript) => {
+  popupsscript: (params: RunSScript) => {
     const targetCmd = params.script;
     if (typeof targetCmd !== "string") {
       throw new Error("sscript received non string target cmd");
@@ -60,7 +86,7 @@ export default (logger: Logger) => ({
     return runCmdInPopupShell(sScriptMakeCmd(targetCmd, ...targetCmdArgs));
   },
 
-  youtubedl: (params: any) => {
+  youtubedl: (params: YoutubedlParams) => {
     const targetUrl = params.url;
     if (typeof targetUrl !== "string") {
       throw new Error("youtube-dl received non string target url");
@@ -69,10 +95,8 @@ export default (logger: Logger) => ({
       cwd: `~/Downloads`,
     });
   },
-  mpv: (params: any) => {
-    const { url } = params as {
-      url: string;
-    };
+  mpv: (params: MpvParams) => {
+    const { url } = params;
     return cmdResponse(
       "mpv",
       "--ytdl-format=bestvideo+bestaudio/best",
@@ -80,12 +104,8 @@ export default (logger: Logger) => ({
       url,
     );
   },
-  gitlabArtifacts: (params: any) => {
-    const { jobId, projectId, gitlabHost } = params as {
-      gitlabHost: string;
-      projectId: string;
-      jobId: string;
-    };
+  gitlabArtifacts: (params: GitlabArtifactsParams) => {
+    const { jobId, projectId, gitlabHost } = params;
     let cmd = "";
     let cwd = null;
     if (gitlabHost.includes("cbinsights")) {
@@ -95,7 +115,7 @@ export default (logger: Logger) => ({
     logger.info(cmd);
     return runCmdInPopupShell(cmd, { cwd });
   },
-  localDev: async (params: any) => {
+  localDev: async (params: LocalDevArgs) => {
     const { fileInfoJson } = params;
     if (typeof fileInfoJson !== "string") {
       throw new Error("Unexpected json type, not string");
@@ -127,6 +147,5 @@ export default (logger: Logger) => ({
     const { code } = p.output();
     return code;
   },
-  captureViaGitlabApi: (params: any) =>
-    captureViaGitlabApi(params as captureInfo),
+  captureViaGitlabApi: (params: captureInfo) => captureViaGitlabApi(params),
 });
