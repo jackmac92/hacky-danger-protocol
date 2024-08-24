@@ -1,9 +1,5 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import {
-  handleSScript,
-  runCmdInPopupShell,
-  runCmdInPopupShellAndWait,
-} from "./util.ts";
+import { handleSScript, runCmdInPopupShell } from "./util.ts";
 
 // Simple name and function, compact form, but not configurable
 Deno.test(
