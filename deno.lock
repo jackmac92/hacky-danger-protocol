@@ -1,0 +1,13 @@
+{
+  "version": "3",
+  "remote": {
+    "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts": "237c7b0a1369f14e047b67ac5c9b617f938f3348b02bc0d9ff755e20e551744b"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:typescript-deno-plugin@^1.31.0"
+      ]
+    }
+  }
+}
