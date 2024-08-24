@@ -48,7 +48,6 @@ export default (logger: Logger) => ({
   },
   popupexec: (params: PopupExec) => {
     const { targetExecStr } = params;
-    logger.debug(targetExecStr);
     if (typeof targetExecStr !== "string") {
       throw new Error("popupexec received non string target cmd");
     }

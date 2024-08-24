@@ -8,5 +8,5 @@ const objectToFlags = (opts) => opts;
 // err.toString(),
 
 export const createNotification = (title, body = "", opts = defaultOpts) => {
-  return cmdResponse("dunstify", ...objectToFlags(opts), title, body);
+  return cmdResponse(["dunstify", ...objectToFlags(opts), title, body]);
 };

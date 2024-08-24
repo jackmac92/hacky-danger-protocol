@@ -1,4 +1,8 @@
-import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import {
+  cmdResponse,
+  cmdResponseZshLoginShell,
+  runAndAwait,
+} from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 
 const defaultCmdOpts: { env?: { [key: string]: string }; cwd: string } = {
   cwd: Deno.env.get("HOME") || "",
@@ -13,6 +17,19 @@ export const _runCmdInTmux = async (cmd: string, options = defaultCmdOpts) => {
   });
   const { code } = await x.output();
   return code;
+};
+
+export const runCmdInPopupShellAndWait = (
+  cmd: string,
+  options: Deno.CommandOptions = {},
+) => {
+  const { env = {} } = options;
+  if (!env.DISPLAY) {
+    env.DISPLAY = ":1";
+  }
+  return runAndAwait([`${cmd} || { echo "Whoops fucked up..."; zsh }`], {
+    env,
+  });
 };
 
 export const runCmdInPopupShell = async (
@@ -73,15 +90,14 @@ export const captureViaGitlabApi = (captureInfo: captureInfo) =>
     method: "POST",
   });
 
-export const sScriptMakeCmd = (sscript: string, ...args: string[]) =>
-  [
-    // "direnv",
-    // "exec",
-    // "/home/jmccown/.local/fullenv",
-    "/home/jmccown/.local/chez-bin/s",
-    ...sscript.split(" "),
-    ...args.map((y) => `'${y}'`),
-  ].join(" ");
+export const sScriptMakeCmd = (sscript: string, ...args: string[]) => [
+  // "direnv",
+  // "exec",
+  // "/home/jmccown/.local/fullenv",
+  "/home/jmccown/.local/chez-bin/s",
+  ...sscript.split(" "),
+  ...args.map((y) => `'${y}'`),
+];
 
 export interface ParsedGitUrl {
   search: string;

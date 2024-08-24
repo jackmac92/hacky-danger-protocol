@@ -1,12 +1,13 @@
-import createLogger from "./logger.ts";
-import handlers from "./handlers.ts";
+import { initLogger } from "./logger.ts";
+import handlersFactory from "./handlers.ts";
+// import type { HandlerArgs } from "./handlers.ts";
 
 const homeDir = Deno.env.get("HOME");
 if (homeDir === undefined) {
   throw new Error("Can't find home dir, why don't you have $HOME set?");
 }
 
-const logger = await createLogger(`${homeDir}/.local/hackydanger.log`);
+const logger = await initLogger(`${homeDir}/.local/hackydanger.log`);
 
 logger.info("starting");
 
@@ -26,19 +27,28 @@ if (import.meta.main) {
   const action = req.host;
 
   // const subAction = req.pathname;
-
-  const params: { [k: string]: unknown } = Object.fromEntries(req.search);
+  const params: { [k: string]: unknown } = Object.fromEntries(
+    new URLSearchParams(req.search),
+  );
 
   logger.info(`Handling ${action}`);
 
-  try {
-    //@ts-ignore-error just easier
-    handlers(logger)[action](params);
-  } catch {
+  const handlers = handlersFactory(logger);
+
+  if (!(action in handlers)) {
     throw new Error(
       `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`,
     );
   }
+  try {
+    //@ts-ignore-error just easier
+    await handlers[action](params);
+  } catch (e) {
+    logger.error("Handler failed");
+    throw e;
+  }
+
+  logger.info(`Finished main processing of ${action}`);
 
   addEventListener("unhandledrejection", (err) => {
     new Deno.Command("/home/jmccown/.nix-profile/bin/dunstify", {
