@@ -92,7 +92,7 @@ export default (logger: Logger) => ({
         `youtube-dl received non string target url, got: '${targetUrl}'`,
       );
     }
-    return cmdResponse(["yt-dlp", targetUrl]);
+    return runCmdInPopupShell(`yt-dlp '${targetUrl}'`);
   },
   mpv: (params: MpvParams) => {
     const { url } = params;
