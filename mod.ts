@@ -31,7 +31,7 @@ if (import.meta.main) {
     new URLSearchParams(req.search),
   );
 
-  logger.info(`Handling ${action}`);
+  logger.info(`Handling ${action}, with ${JSON.stringify(params)}`);
 
   const handlers = handlersFactory(logger);
 
@@ -40,15 +40,16 @@ if (import.meta.main) {
       `Unhandled action ${action}, wanted one of ${Object.keys(handlers)}`,
     );
   }
+  let result;
   try {
     //@ts-ignore-error just easier
-    await handlers[action](params);
+    result = await handlers[action](params);
   } catch (e) {
     logger.error("Handler failed");
     throw e;
   }
 
-  logger.info(`Finished main processing of ${action}`);
+  logger.info(`Finished main processing of ${action}, got result: ${result}`);
 
   addEventListener("unhandledrejection", (err) => {
     new Deno.Command("/home/jmccown/.nix-profile/bin/dunstify", {
