@@ -1,7 +1,6 @@
 import {
   cmdResponse,
   cmdResponseZshLoginShell,
-  runAndAwait,
 } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 
 const defaultCmdOpts: { env?: { [key: string]: string }; cwd: string } = {
@@ -17,19 +16,6 @@ export const _runCmdInTmux = async (cmd: string, options = defaultCmdOpts) => {
   });
   const { code } = await x.output();
   return code;
-};
-
-export const runCmdInPopupShellAndWait = (
-  cmd: string,
-  options: Deno.CommandOptions = {},
-) => {
-  const { env = {} } = options;
-  if (!env.DISPLAY) {
-    env.DISPLAY = ":1";
-  }
-  return runAndAwait([`${cmd} || { echo "Whoops fucked up..."; zsh }`], {
-    env,
-  });
 };
 
 export const runCmdInPopupShell = async (

@@ -1,9 +1,5 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import {
-  handleSScript,
-  runCmdInPopupShell,
-  runCmdInPopupShellAndWait,
-} from "./util.ts";
+import { handleSScript, runCmdInPopupShell } from "./util.ts";
 
 // Simple name and function, compact form, but not configurable
 Deno.test(
@@ -23,10 +19,5 @@ Deno.test(
 
 Deno.test("Test popupexec handler", async () => {
   const resp = await runCmdInPopupShell("sleep 5");
-  assertEquals(typeof resp, "number");
-});
-
-Deno.test("Test popupexec handler", async () => {
-  const resp = await runCmdInPopupShellAndWait("gnome-terminal");
   assertEquals(typeof resp, "number");
 });
