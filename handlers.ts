@@ -104,7 +104,7 @@ export default (logger: Logger) => ({
     ]);
   },
   gitlabArtifacts: (params: GitlabArtifactsParams) => {
-    const { jobId, projectId, gitlabHost } = params;
+    const { jobId, projectId } = params;
     const cmd = `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
     logger.info(cmd);
     return runCmdInPopupShell(cmd);

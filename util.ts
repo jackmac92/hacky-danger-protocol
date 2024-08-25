@@ -1,8 +1,4 @@
-import {
-  cmdResponse,
-  cmdResponseZshLoginShell,
-  runCmdInPopupShell,
-} from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import { runCmdInPopupShell } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 
 export const _runCmdInTmux = async (cmd: string, options = {}) => {
   // accept params
@@ -17,8 +13,7 @@ export const _runCmdInTmux = async (cmd: string, options = {}) => {
 export const handleSScript = (sscript: string, ...args: string[]) => {
   const fullCmd = sScriptMakeCmd(sscript, ...args);
   // TODO setup devilspie to auto hide these windows when needed (st -c class flag?)
-  // await runCmdInPopupShell(fullCmd.join(" "));
-  return cmdResponse(fullCmd);
+  return runCmdInPopupShell(fullCmd.join(" "));
 };
 
 export interface captureInfo {
