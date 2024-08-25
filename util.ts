@@ -4,12 +4,7 @@ import {
   runCmdInPopupShell,
 } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 
-const defaultCmdOpts: { env?: { [key: string]: string }; cwd: string } = {
-  cwd: Deno.env.get("HOME") || "",
-  env: {},
-};
-
-export const _runCmdInTmux = async (cmd: string, options = defaultCmdOpts) => {
+export const _runCmdInTmux = async (cmd: string, options = {}) => {
   // accept params
   const x = new Deno.Command("tmux", {
     ...options,

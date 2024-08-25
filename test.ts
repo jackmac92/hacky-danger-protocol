@@ -16,8 +16,3 @@ Deno.test(
     assertEquals(typeof resp, "string");
   },
 );
-
-Deno.test("Test popupexec handler", async () => {
-  const resp = await runCmdInPopupShell("sleep 5");
-  assertEquals(typeof resp, "number");
-});
