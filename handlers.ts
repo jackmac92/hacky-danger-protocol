@@ -96,12 +96,12 @@ export default (logger: Logger) => ({
   },
   mpv: (params: MpvParams) => {
     const { url } = params;
-    return cmdResponse(
+    return cmdResponse([
       "mpv",
       "--ytdl-format=bestvideo+bestaudio/best",
       "--af=rubberband=pitch-scale=0.981818181818181",
       url,
-    );
+    ]);
   },
   gitlabArtifacts: (params: GitlabArtifactsParams) => {
     const { jobId, projectId, gitlabHost } = params;
@@ -125,11 +125,7 @@ export default (logger: Logger) => ({
     const gitRef = fileInfo.ref;
     const repoName = fileInfo.name;
     const inRepofilePath = fileInfo.filepath;
-    const repoDir = await cmdResponse(
-      "~/.nix-profile/bin/zoxide",
-      "query",
-      repoName,
-    );
+    const repoDir = await cmdResponse(["zoxide", "query", repoName]);
     const filePath = path.join(repoDir, inRepofilePath);
     // TODO how to make this command switch projectile project, to activate the workspace and reopen existing
     logger.debug(
