@@ -22,14 +22,9 @@ export const runCmdInPopupShell = async (
   cmd: string,
   options = defaultCmdOpts,
 ) => {
-  const { env = {} } = options;
-  if (!env.DISPLAY) {
-    env.DISPLAY = ":1";
-  }
   const x = new Deno.Command("st", {
     ...options,
     args: ["-e", "zsh", "-lc", `${cmd} || { echo "Whoops fucked up..."; zsh }`],
-    env,
   });
   const { code } = await x.output();
   return code;

@@ -58,7 +58,6 @@ if (import.meta.main) {
         "hacky danger protocol errror",
         err.toString(),
       ],
-      env: { DISPLAY: ":1" },
     });
     logger.error(err);
   });
