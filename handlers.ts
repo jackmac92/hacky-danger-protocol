@@ -90,7 +90,7 @@ export default (logger: Logger) => ({
     if (typeof targetUrl !== "string") {
       throw new Error("youtube-dl received non string target url");
     }
-    return runCmdInPopupShell(`youtube-dl "${targetUrl}"`, {
+    return runCmdInPopupShell(`yt-dlp "${targetUrl}"`, {
       cwd: `~/Downloads`,
     });
   },
