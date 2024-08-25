@@ -88,7 +88,9 @@ export default (logger: Logger) => ({
   youtubedl: (params: YoutubedlParams) => {
     const targetUrl = params.url;
     if (typeof targetUrl !== "string") {
-      throw new Error("youtube-dl received non string target url");
+      throw new Error(
+        `youtube-dl received non string target url, got: '${targetUrl}'`,
+      );
     }
     return cmdResponse(["yt-dlp", targetUrl]);
   },
