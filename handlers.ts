@@ -90,9 +90,7 @@ export default (logger: Logger) => ({
     if (typeof targetUrl !== "string") {
       throw new Error("youtube-dl received non string target url");
     }
-    return runCmdInPopupShell(`yt-dlp "${targetUrl}"`, {
-      cwd: `~/Downloads`,
-    });
+    return cmdResponse(["yt-dlp", targetUrl]);
   },
   mpv: (params: MpvParams) => {
     const { url } = params;
