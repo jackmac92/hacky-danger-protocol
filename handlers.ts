@@ -1,13 +1,15 @@
 import * as path from "https://deno.land/std/path/mod.ts";
-import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
-import { Logger } from "https://deno.land/std@0.93.0/log/mod.ts";
+import {
+  runCmdInPopupShell,
+  cmdResponse,
+} from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import { Logger } from "https://deno.land/std/log/mod.ts";
 import type { captureInfo } from "./util.ts";
 // import { xdotoolOpenActive } from "./xdotool.ts";
 import {
   captureViaGitlabApi,
   handleSScript,
   ParsedGitUrl,
-  runCmdInPopupShell,
   sScriptMakeCmd,
 } from "./util.ts";
 
@@ -82,7 +84,8 @@ export default (logger: Logger) => ({
       throw new Error("sscript received non array args");
     }
     logger.info("starting s command popup");
-    return runCmdInPopupShell(sScriptMakeCmd(targetCmd, ...targetCmdArgs));
+    const sCmd = sScriptMakeCmd(targetCmd, ...targetCmdArgs);
+    return runCmdInPopupShell(sCmd.join(" "));
   },
 
   youtubedl: (params: YoutubedlParams) => {
@@ -127,14 +130,15 @@ export default (logger: Logger) => ({
       `opening ${filePath} at ref ${gitRef} for ${inRepofilePath} from ${repoName}`,
     );
 
-    const cmd = Deno.env.get("VISUAL")?.split(" ") ?? ["e"];
+    const cmd = Deno.env.get("VISUAL") ?? "e";
+    const args = [];
     if (parseInt(lineNo, 10)) {
-      cmd.push(`+${lineNo}`);
+      args.push(`+${lineNo}`);
     }
-    cmd.push(filePath);
-    logger.debug(`running: ${cmd}`);
-    const p = new Deno.Command({ cmd, stdout: "piped", stderr: "piped" });
-    const { code } = p.output();
+    args.push(filePath);
+    logger.debug(`running: ${cmd} ${args}`);
+    const p = new Deno.Command(cmd, { args, stdout: "piped", stderr: "piped" });
+    const { code } = await p.output();
     return code;
   },
   captureViaGitlabApi: (params: captureInfo) => captureViaGitlabApi(params),

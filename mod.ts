@@ -1,20 +1,27 @@
 import { initLogger } from "./logger.ts";
 import handlersFactory from "./handlers.ts";
-// import type { HandlerArgs } from "./handlers.ts";
+import type { HandlerArgs } from "./handlers.ts";
 
-const homeDir = Deno.env.get("HOME");
-if (homeDir === undefined) {
-  throw new Error("Can't find home dir, why don't you have $HOME set?");
-}
-
-const logger = await initLogger(`${homeDir}/.local/hackydanger.log`);
-
-logger.info("starting");
+type handlerFunc = (s: HandlerArgs) => unknown;
+type _actionTypes = ReturnType<typeof handlersFactory>;
+type actionType = keyof _actionTypes;
 
 if (import.meta.main) {
+  await main(Deno.args[0]);
+}
+
+async function main(uri: string) {
+  const homeDir = Deno.env.get("HOME");
+  if (homeDir === undefined) {
+    throw new Error("Can't find home dir, why don't you have $HOME set?");
+  }
+
+  const logger = await initLogger(`${homeDir}/.local/hackydanger.log`);
+
+  logger.info("starting");
   let req;
   try {
-    req = new URL(Deno.args[0]);
+    req = new URL(uri);
   } catch (e) {
     logger.error("Failed to parse input!");
     logger.error(e);
@@ -23,13 +30,12 @@ if (import.meta.main) {
 
   // TODO term helper, find or create tmux window
   // TODO term helper, find or create browser window
-
-  const action = req.host;
+  const action = req.host as string as actionType;
 
   // const subAction = req.pathname;
-  const params: { [k: string]: unknown } = Object.fromEntries(
+  const params = Object.fromEntries(
     new URLSearchParams(req.search),
-  );
+  ) as unknown as HandlerArgs;
 
   logger.info(`Handling ${action}, with ${JSON.stringify(params)}`);
 
@@ -42,8 +48,8 @@ if (import.meta.main) {
   }
   let result;
   try {
-    //@ts-ignore-error just easier
-    result = await handlers[action](params);
+    const handler = handlers[action] as unknown as handlerFunc;
+    result = await handler(params);
   } catch (e) {
     logger.error("Handler failed");
     throw e;
