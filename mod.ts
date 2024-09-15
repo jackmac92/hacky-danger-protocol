@@ -6,12 +6,13 @@ type handlerFunc = (s: HandlerArgs) => unknown;
 type _actionTypes = ReturnType<typeof handlersFactory>;
 type actionType = keyof _actionTypes;
 
+const homeDir = Deno.env.get("HOME");
+
 if (import.meta.main) {
   await main(Deno.args[0]);
 }
 
 async function main(uri: string) {
-  const homeDir = Deno.env.get("HOME");
   if (homeDir === undefined) {
     throw new Error("Can't find home dir, why don't you have $HOME set?");
   }
@@ -58,7 +59,7 @@ async function main(uri: string) {
   logger.info(`Finished main processing of ${action}, got result: ${result}`);
 
   addEventListener("unhandledrejection", (err) => {
-    new Deno.Command("/home/jmccown/.nix-profile/bin/dunstify", {
+    new Deno.Command(`${homeDir}/.nix-profile/bin/dunstify`, {
       args: [
         "--urgency=critical",
         "hacky danger protocol errror",
