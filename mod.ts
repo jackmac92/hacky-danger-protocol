@@ -17,7 +17,7 @@ async function main(uri: string) {
     throw new Error("Can't find home dir, why don't you have $HOME set?");
   }
 
-  const logger = await initLogger(`${homeDir}/.local/hackydanger.log`);
+  const logger = initLogger(`${homeDir}/.local/hackydanger.log`);
 
   logger.info("starting");
   let req;

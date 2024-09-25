@@ -1,5 +1,34 @@
 {
   "version": "4",
+  "specifiers": {
+    "jsr:@std/fmt@^1.0.2": "1.0.2",
+    "jsr:@std/fs@^1.0.4": "1.0.4",
+    "jsr:@std/io@~0.224.9": "0.224.9",
+    "jsr:@std/log@~0.224.8": "0.224.8",
+    "jsr:@std/path@^1.0.6": "1.0.6"
+  },
+  "jsr": {
+    "@std/fmt@1.0.2": {
+      "integrity": "87e9dfcdd3ca7c066e0c3c657c1f987c82888eb8103a3a3baa62684ffeb0f7a7"
+    },
+    "@std/fs@1.0.4": {
+      "integrity": "2907d32d8d1d9e540588fd5fe0ec21ee638134bd51df327ad4e443aaef07123c"
+    },
+    "@std/io@0.224.9": {
+      "integrity": "4414664b6926f665102e73c969cfda06d2c4c59bd5d0c603fd4f1b1c840d6ee3"
+    },
+    "@std/log@0.224.8": {
+      "integrity": "8938225caf405cbf0a4871191fa3d55f2fabe3363f4235fdb20ebe2620ecda43",
+      "dependencies": [
+        "jsr:@std/fmt",
+        "jsr:@std/fs",
+        "jsr:@std/io"
+      ]
+    },
+    "@std/path@1.0.6": {
+      "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
+    }
+  },
   "redirects": {
     "https://deno.land/std/log/mod.ts": "https://deno.land/std@0.224.0/log/mod.ts",
     "https://deno.land/std/path/mod.ts": "https://deno.land/std@0.224.0/path/mod.ts",
@@ -110,5 +139,11 @@
     "https://deno.land/std@0.224.0/path/windows/to_file_url.ts": "40e560ee4854fe5a3d4d12976cef2f4e8914125c81b11f1108e127934ced502e",
     "https://deno.land/std@0.224.0/path/windows/to_namespaced_path.ts": "4ffa4fb6fae321448d5fe810b3ca741d84df4d7897e61ee29be961a6aac89a4c",
     "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts": "84ea572ea44e4a5c7e91db00aaa1a80de91dc7819b070cb6f7cc53e4c4ccf628"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/log@~0.224.8",
+      "jsr:@std/path@^1.0.6"
+    ]
   }
 }

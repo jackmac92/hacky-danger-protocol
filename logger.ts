@@ -1,19 +1,19 @@
-import * as log from "https://deno.land/std/log/mod.ts";
+import * as log from "@std/log";
 
 let logger: log.Logger | null = null;
 
-export async function initLogger(logFile: string) {
+export function initLogger(logFile: string) {
   if (logger) {
     return logger;
   }
-  await log.setup({
+  log.setup({
     // seems to use the maximum provided level (e.g. no debug messages unless both are set to debug)
     handlers: {
-      console: new log.handlers.ConsoleHandler("DEBUG"),
-      file: new log.handlers.FileHandler("DEBUG", {
+      console: new log.ConsoleHandler("DEBUG"),
+      file: new log.FileHandler("DEBUG", {
         filename: logFile,
-        // you can change format of output message using any keys in `LogRecord`.
-        formatter: "{levelName} {msg}",
+        formatter: (record: log.LogRecord) =>
+          `${record.levelName} ${record.msg}`,
       }),
     },
 

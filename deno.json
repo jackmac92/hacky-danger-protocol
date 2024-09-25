@@ -1,10 +1,14 @@
 {
-    "compilerOptions": {
-        "plugins": [
-            {
-                "name": "typescript-deno-plugin",
-                "enable": true
-            }
-        ]
-    }
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-deno-plugin",
+        "enable": true
+      }
+    ]
+  },
+  "imports": {
+    "@std/log": "jsr:@std/log@^0.224.8",
+    "@std/path": "jsr:@std/path@^1.0.6"
+  }
 }
