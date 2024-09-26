@@ -1,7 +1,7 @@
 import * as path from "@std/path";
 import {
-  runCmdInPopupShell,
   cmdResponse,
+  runCmdInPopupShell,
 } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
 import { Logger } from "@std/log";
 import type { captureInfo } from "./util.ts";
@@ -108,7 +108,8 @@ export default (logger: Logger) => ({
   },
   gitlabArtifacts: (params: GitlabArtifactsParams) => {
     const { jobId, projectId } = params;
-    const cmd = `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
+    const cmd =
+      `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
     logger.info(cmd);
     return runCmdInPopupShell(cmd);
   },
