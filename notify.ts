@@ -2,11 +2,26 @@ import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master
 
 const defaultOpts = {};
 
-const objectToFlags = (opts) => opts;
-// "--urgency=critical",
-// "hacky danger protocol errror",
-// err.toString(),
+function objectToFlags(obj: Record<string, string | null>): string {
+  const flags: string[] = [];
 
-export const createNotification = (title, body = "", opts = defaultOpts) => {
+  for (const [key, value] of Object.entries(obj)) {
+    const prefix = key.length === 1 ? "-" : "--";
+
+    if (value === null) {
+      flags.push(`${prefix}${key}`);
+    } else {
+      flags.push(`${prefix}${key}=${value}`);
+    }
+  }
+
+  return flags.join(" ");
+}
+
+export const createNotification = (
+  title: string,
+  body = "",
+  opts = defaultOpts,
+) => {
   return cmdResponse(["dunstify", ...objectToFlags(opts), title, body]);
 };

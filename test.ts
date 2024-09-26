@@ -24,7 +24,7 @@ Deno.test(
   {
     ignore: true,
   },
-  async () => {
+  () => {
     // Does not work because I can't figure out how to close the file handler after test run
     const logFile = "/tmp/deno-test-temp";
     const logger = initLogger(logFile);
@@ -35,6 +35,6 @@ Deno.test(
   },
 );
 
-Deno.test("Ensure logger init works", async () => {
+Deno.test("Ensure logger init works", () => {
   initLogger("/tmp/deno-test-temp");
 });
