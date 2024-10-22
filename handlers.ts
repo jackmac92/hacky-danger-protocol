@@ -99,17 +99,18 @@ export default (logger: Logger) => ({
   },
   mpv: (params: MpvParams) => {
     const { url } = params;
-    return cmdResponse([
-      "mpv",
-      "--ytdl-format=bestvideo+bestaudio/best",
-      "--af=rubberband=pitch-scale=0.981818181818181",
-      url,
-    ]);
+    return runCmdInPopupShell(
+      [
+        "mpv",
+        "--ytdl-format=bestvideo+bestaudio/best",
+        "--af=rubberband=pitch-scale=0.981818181818181",
+        `'${url}'`,
+      ].join(" "),
+    );
   },
   gitlabArtifacts: (params: GitlabArtifactsParams) => {
     const { jobId, projectId } = params;
-    const cmd =
-      `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
+    const cmd = `s gitlab artifacts hacky-danger-download ${projectId} ${jobId}`;
     logger.info(cmd);
     return runCmdInPopupShell(cmd);
   },
