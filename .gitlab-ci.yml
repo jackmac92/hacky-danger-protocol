@@ -1,0 +1,4 @@
+include:
+  - project: "quickstart-templates/ci-templates"
+    ref: v0.13.5
+    file: "deno.yml"
