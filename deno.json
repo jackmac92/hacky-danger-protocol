@@ -1,6 +1,7 @@
 {
   "imports": {
     "@std/log": "jsr:@std/log@^0.224.8",
-    "@std/path": "jsr:@std/path@^1.0.6"
+    "@std/path": "jsr:@std/path@^1.0.6",
+    "deno-exec": "jsr:@jackmac92/deno-exec@^0.1.0"
   }
 }

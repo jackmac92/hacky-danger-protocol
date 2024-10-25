@@ -1,4 +1,4 @@
-import { cmdResponse } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import { cmdResponse } from "deno-exec";
 
 export const xdotool = (...cmd: string[]) => cmdResponse(["xdotool", ...cmd]);
 

@@ -1,4 +1,4 @@
-import { runCmdInPopupShell } from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import { runCmdInPopupShell } from "deno-exec";
 
 export const _runCmdInTmux = async (cmd: string, options = {}) => {
   // accept params

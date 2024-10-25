@@ -1,8 +1,5 @@
 import * as path from "@std/path";
-import {
-  cmdResponse,
-  runCmdInPopupShell,
-} from "https://gitlab.com/jackmac92/deno-exec/-/raw/master/mod.ts";
+import { cmdResponse, runCmdInPopupShell } from "deno-exec";
 import { Logger } from "@std/log";
 import type { captureInfo } from "./util.ts";
 // import { xdotoolOpenActive } from "./xdotool.ts";
