@@ -1,7 +1,6 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@jackmac92/deno-exec@0.1": "0.1.0",
     "jsr:@std/fmt@^1.0.2": "1.0.3",
     "jsr:@std/fs@^1.0.4": "1.0.5",
     "jsr:@std/io@0.225": "0.225.0",
@@ -9,9 +8,6 @@
     "jsr:@std/path@^1.0.6": "1.0.7"
   },
   "jsr": {
-    "@jackmac92/deno-exec@0.1.0": {
-      "integrity": "582087c9c465a3da4533fdd96955c1e0ca44c73594b804e42d990dd39bca292b"
-    },
     "@std/fmt@1.0.3": {
       "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
     },
@@ -38,7 +34,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@jackmac92/deno-exec@0.1",
+      "jsr:@jackmac92/deno-exec@^1.1.3",
       "jsr:@std/log@~0.224.8",
       "jsr:@std/path@^1.0.6"
     ]
