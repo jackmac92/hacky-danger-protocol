@@ -1,4 +1,4 @@
 include:
   - project: "quickstart-templates/ci-templates"
-    ref: v0.22.5
+    ref: v0.22.6
     file: "entrypoints/deno.yml"
